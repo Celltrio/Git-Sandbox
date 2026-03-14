@@ -268,7 +268,310 @@ EDIT HERE → STAGE → COMMIT → PUSH → CLOUD
 <div style="page-break-after: always;"></div>
 
 
-# 5. Setting Up Git (One‑Time)
+# 5. Making and Saving Changes (Daily Flow)
+
+The standard edit cycle is:
+
+1. **Edit files** in your Working Directory
+2. **Stage** only what you want to commit (`git add <file>` or `git add .`)
+3. **Commit** your snapshot (`git commit -m "message"`)
+4. **Sync** with the team (`git pull` before pushing; resolve conflicts if needed)
+5. **Push** your branch to the remote (`git push`)
+
+Example:
+
+```bash
+# See what's changed
+git status
+
+# Stage specific file
+git add src/app.js
+
+# Commit snapshot
+git commit -m "Implement search box behavior"
+
+# Update your branch from remote, then push
+git pull --rebase
+git push
+```
+
+---
+
+# 6. Branching and Merging
+
+Branching is one of Git’s most powerful features. A **branch** is simply a pointer to a commit — an independent line of development.
+
+Branches allow safe, isolated changes before merging back into the `main` line.
+
+A typical, correct workflow is:
+
+1. **Modify files** in your working directory
+2. **Stage** changes with `git add`
+3. **Commit** with `git commit`
+4. **Repeat** until ready, then merge
+
+---
+
+## 6.1 What Is HEAD?
+
+In Git, **HEAD** tells you *where you are*:
+
+- HEAD points to **the current branch** and its **latest commit**
+- When you switch branches, HEAD **moves**
+- When you commit, HEAD **advances** to the new commit
+- HEAD determines which files are visible and **where new commits go**
+
+See HEAD by running:
+
+```bash
+git status
+git branch
+```
+
+Example output (the `*` indicates HEAD):
+
+```text
+* myBranch
+  main
+```
+
+With this in mind, let’s walk through a concrete scenario using `myFile.txt`.
+
+---
+
+## 6.2 Branching Scenario With Real File Changes
+
+### Step 1 — Starting on `main` (before branching)
+
+`myFile.txt` content:
+
+```text
+Hello World. <-- main commit #2
+```
+
+Commit graph:
+
+```text
+main
+o--o <--- HEAD
+```
+
+---
+
+### Step 2 — Create a feature branch from `main`
+
+**Create Branch:**
+
+```bash
+git checkout -b myBranch
+```
+
+File contents **do not change** on branch creation:
+
+```text
+Hello World. <-- inherited from main commit #2
+```
+
+Commit graph:
+
+```text
+main
+o--o
+    \
+  myBranch
+     o <--- HEAD (myBranch)
+```
+
+---
+
+### Step 3 — First change on the branch (modify → add → commit)
+
+**Modify the file:**
+
+```text
+Hello World.
+My first change.  <-- new content added by user
+```
+
+**Stage and Commit:**
+
+```bash
+git add myFile.txt
+git commit -m "Add first change"
+```
+
+Commit graph:
+
+```text
+main
+o--o
+    \
+     \myBranch
+      o--o <--- HEAD (myBranch)
+```
+
+---
+
+### Step 4 — Second change on the branch (modify → add → commit)
+
+**Modify the file again:**
+
+```text
+Hello World.
+My first change.
+My second change  <-- new content added by user
+```
+
+**Stage and Commit:**
+
+```bash
+git add myFile.txt
+git commit -m "Add second change"
+```
+
+Commit graph:
+
+```text
+main
+o--o
+    \
+     \   myBranch
+      o--o--o <--- HEAD (myBranch)
+```
+
+---
+
+### Step 5 — Switch back to `main` before merging
+
+**Switch back to `main`:**
+
+```bash
+git checkout main
+```
+
+`main` remains unchanged:
+
+```text
+Hello World. <-- main commit #2
+```
+
+Commit graph:
+
+```text
+main
+o--o <--- HEAD (main)
+    \
+     \   myBranch
+      o--o--o
+```
+
+---
+
+### Step 6 — Merge the branch into `main`
+
+**Merge our Changes:**
+
+```bash
+git merge myBranch
+```
+
+Merged file on `main`:
+
+```text
+Hello World.
+My first change.
+My second change <-- main commit #3 (merge result)
+```
+
+Commit graph:
+
+```text
+main
+o--o-----------o <--- HEAD (main)
+    \         /
+     \   myBranch
+      o--o--o
+```
+
+**(Optionally) Delete the branch:**
+
+```bash
+git branch -d myBranch
+```
+
+---
+
+## 6.3 Why This Matters
+
+- All changes begin in the **working directory**
+- Git records snapshots **after** you stage and commit
+- Branches isolate work; `main` stays stable
+- Merges integrate reviewed changes and preserve history
+
+---
+
+# 7. Undoing Mistakes (Beginner‑Safe)
+- **Discard local changes to a file (not staged):**
+  ```bash
+  git checkout -- path/to/file
+  ```
+- **Unstage a file (keep edits):**
+  ```bash
+  git reset HEAD path/to/file
+  ```
+- **See history:**
+  ```bash
+  git log --oneline --graph --decorate --all
+  ```
+- **Revert a commit (create a new commit that undoes it):**
+  ```bash
+  git revert <commit_sha>
+  ```
+
+> Tip: Avoid `git reset --hard` until you’re comfortable; it discards changes.
+
+
+---
+
+# 8. Recommended Workflows
+**Solo workflow**:
+1. `git checkout -b feature/<name>`
+2. Work: edit → add → commit (repeat)
+3. `git switch main`
+4. `git merge feature/<name>`
+
+**Team feature‑branch workflow**:
+1. `git pull` to synchronize `main`
+2. `git checkout -b feature/<name>`
+3. Work: edit → add → commit (repeat)
+4. `git push -u origin feature/<name>`
+5. Open a Pull Request (PR) for review
+6. Merge to `main` after approval
+
+
+---
+
+# 9. Beginner-Friendly Resources
+
+- Learn Git in 15 Minutes — https://www.youtube.com/watch?v=USjZcfj8yxE
+- GitHub Intro for Beginners — https://www.youtube.com/watch?v=r8jQ9hVA2qs
+- git — the simple guide — https://rogerdudler.github.io/git-guide/
+
+---
+
+# 10. Summary Checklist
+
+- Understand the lifecycle (Untracked → Staged → Committed)
+- Practice the daily flow (edit → add → commit → pull → push)
+- Use branches for isolated work; merge via PRs
+- Learn to read the log and recover safely
+
+---
+<div style="page-break-after: always;"></div>
+
+
+# Appendix A — Setting Up Git (One-Time)
+
 Configure your identity (used to label commits):
 
 ```bash
@@ -300,7 +603,8 @@ git config --list
 <div style="page-break-after: always;"></div>
 
 
-# 6. Starting a Project
+# Appendix B — Starting a Project
+
 **A) Create a brand‑new repository**
 ```bash
 mkdir my-project
@@ -324,331 +628,3 @@ git push -u origin main
 git clone https://example.com/your/repo.git
 cd repo
 ```
-
-
-<!-- pagebreak -->
-<div style="page-break-after: always;"></div>
-
-
-# 7. Making and Saving Changes (Daily Flow)
-The standard edit cycle is:
-
-1. **Edit files** in your Working Directory
-2. **Stage** only what you want to commit (`git add <file>` or `git add .`)
-3. **Commit** your snapshot (`git commit -m "message"`)
-4. **Sync** with the team (`git pull` before pushing; resolve conflicts if needed)
-5. **Push** your branch to the remote (`git push`)
-
-Example:
-```bash
-# See what's changed
-git status
-
-# Stage specific file
-git add src/app.js
-
-# Commit snapshot
-git commit -m "Implement search box behavior"
-
-# Update your branch from remote, then push
-git pull --rebase
-git push
-```
-
-Good messages are short, imperative, and meaningful (e.g., "Fix null check on settings loader").
-
-
-<!-- pagebreak -->
-<div style="page-break-after: always;"></div>
-
-
-# 8. Branching and Merging
-
-Branching is one of Git’s most powerful features. A **branch** is simply a pointer to a commit — an independent line of development. Branches allow safe, isolated changes before merging back into the `main` line.
-
-A typical, correct workflow is:
-
-1. **Modify files** in your working directory
-2. **Stage** changes with `git add`
-3. **Commit** with `git commit`
-4. **Repeat** until ready, then merge
-
----
-
-## 8.1 What Is HEAD?
-
-In Git, **HEAD** tells you *where you are*:
-
-- HEAD points to **the current branch** and its **latest commit**
-- When you switch branches, HEAD **moves**
-- When you commit, HEAD **advances** to the new commit
-- HEAD determines which files are visible and **where new commits go**
-
-See HEAD by running:
-
-```
-git status
-git branch
-```
-
-Example output (the `*` indicates HEAD):
-
-```
-* myBranch
-  main
-```
-
-With this in mind, let’s walk through a concrete scenario using `myFile.txt`.
-
-
-<!-- pagebreak -->
-
-
-## 8.2 Branching Scenario With Real File Changes
-
-### Step 1 — Starting on `main` (before branching)
-
-`myFile.txt` content:
-
-```txt
-Hello World.  <-- main commit #2
-```
-
-Commit graph:
-
-```
-main
- |
- o--o   <--- HEAD
-```
-
-
-<!-- pagebreak -->
-
-
-### Step 2 — Create a feature branch from main
-
-Command:
-
-```
-git checkout -b myBranch
-```
-
-File contents **do not change** on branch creation:
-
-```txt
-Hello World.  <-- inherited from main commit #2
-```
-
-Commit graph:
-
-```
-main
- |
- o--o
-
-myBranch
-   |
-   o   <--- HEAD (myBranch)
-```
-
-
-<!-- pagebreak -->
-
-
-### Step 3 — First change on the branch (modify → add → commit)
-
-**Modify the file:**
-
-```txt
-Hello World.
-My first change.  <-- new content added by user
-```
-
-**Stage & commit:**
-
-```
-git add myFile.txt
-git commit -m "Add first change"
-```
-
-Commit graph:
-
-```
-main
- |
- o--o
-
-myBranch
-   |
-   o--o   <--- HEAD (myBranch)
-```
-
-
-<!-- pagebreak -->
-
-
-### Step 4 — Second change on the branch (modify → add → commit)
-
-**Modify the file again:**
-
-```txt
-Hello World.
-My first change.
-My second change  <-- new content added by user
-```
-
-**Stage & commit:**
-
-```
-git add myFile.txt
-git commit -m "Add second change"
-```
-
-Commit graph:
-
-```
-main
- |
- o--o
-
-myBranch
-   |
-   o--o--o   <--- HEAD (myBranch)
-```
-
-
-<!-- pagebreak -->
-
-
-### Step 5 — Switch back to `main` before merging
-
-Command:
-
-```
-git checkout main
-```
-
-`main` remains unchanged:
-
-```txt
-Hello World.  <-- main commit #2
-```
-
-Commit graph:
-
-```
-main
- |
- o--o   <--- HEAD (main)
-
-myBranch
-   |
-   o--o--o
-```
-
-
-<!-- pagebreak -->
-
-
-### Step 6 — Merge the branch into `main`
-
-Command:
-
-```
-git merge myBranch
-```
-
-Merged file on `main`:
-
-```txt
-Hello World.
-My first change.
-My second change  <-- main commit #3 (merge result)
-```
-
-Commit graph:
-
-```
-main
- |
- o--o------o   <--- HEAD (main)
-       /
-myBranch o--o--o
-```
-
-Optionally delete the feature branch:
-
-```
-git branch -d myBranch
-```
-
----
-
-## 8.3 Why This Matters
-
-- All changes begin in the **working directory**
-- Git records snapshots **after** you stage and commit
-- Branches isolate work; `main` stays stable
-- Merges integrate reviewed changes and preserve history
-
-
-
-<!-- pagebreak -->
-
-
-# 9. Undoing Mistakes (Beginner‑Safe)
-- **Discard local changes to a file (not staged):**
-  ```bash
-  git checkout -- path/to/file
-  ```
-- **Unstage a file (keep edits):**
-  ```bash
-  git reset HEAD path/to/file
-  ```
-- **See history:**
-  ```bash
-  git log --oneline --graph --decorate --all
-  ```
-- **Revert a commit (create a new commit that undoes it):**
-  ```bash
-  git revert <commit_sha>
-  ```
-
-> Tip: Avoid `git reset --hard` until you’re comfortable; it discards changes.
-
-
-<!-- pagebreak -->
-
-
-# 10. Recommended Workflows
-**Solo workflow**: edit → add → commit → push.  
-**Team feature‑branch workflow**:
-1. `git pull` to synchronize `main`
-2. `git checkout -b feature/<name>`
-3. Work: edit → add → commit (repeat)
-4. `git push -u origin feature/<name>`
-5. Open a Pull Request (PR) for review
-6. Merge to `main` after approval
-
-
-<!-- pagebreak -->
-
-
-# 11. Beginner‑Friendly Resources
-- Learn Git in 15 Minutes — https://www.youtube.com/watch?v=USjZcfj8yxE
-- GitHub Intro for Beginners — https://www.youtube.com/watch?v=r8jQ9hVA2qs
-- git — the simple guide — https://rogerdudler.github.io/git-guide/
-
-
-<!-- pagebreak -->
-
-
-# 12. Summary Checklist
-- Install and configure Git
-- Understand the lifecycle (Untracked → Staged → Committed)
-- Practice the daily flow (edit → add → commit → pull → push)
-- Use branches for isolated work; merge via PRs
-- Learn to read the log and recover safely
-
----
