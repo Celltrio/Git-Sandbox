@@ -20,26 +20,26 @@
 1. Navigate to the Git-Sandbox folder
 2. Switch to the "develop" branch
    - git switch develop
-3. Create a new branch for your exercise in the format <initials>-Tree-Exercise
+3. Create a new branch for your exercise in the format \<initials\>-Tree-Exercise
    - git checkout -b abc-Tree-Exercise
-4. Navigate to the Forest folder, and copy the Template-tree.txt file to a new text file <initials>-tree.txt
+4. Navigate to the Forest folder, and copy the Template-tree.txt file to a new text file \<initials\>-tree.txt
    - cd Forest
    - copy "Template-tree.txt" to "abc-tree.txt"
 5. Edit your new file, and add a "leaf" to "Branch-B" of the tree
    - Notepad abc-tree.txt
-   - type: <Leaf-001>
+   - type: \<Leaf-001\>
    - Save the file
 6. Commit the changes you have just made to your branch
    - git status - to see files that have changed
-   - git add <files> - any files listed in the status
+   - git add \<files\> - any files listed in the status
    - git commit -m "added my first leaf" - commit the changes with a message
 7. Edit the tree file to add a few more leaves (at least 3) to any of the three branches (A, B, or C)
    - Open file (if not already open) abc-tree.txt
-   - type 3-4 lines: <Leaf-00X>
+   - type 3-4 lines: \<Leaf-00X\>
    - Save the file
 8. Commit the changes you have just made to your branch
    - git status - to see files that have changed
-   - git add <files> - any files listed in the status that have changed
+   - git add \<files\> - any files listed in the status that have changed
    - git commit -m "added more leaves to my tree" - commit the changes with a message
 9. Edit the tree file and remove one of the leaves (Fall has arrived)
    - Open file (if not already open) abc-tree.txt
@@ -47,7 +47,7 @@
    - Save the file
 10. Commit the changes you have just made to your branch
    - git status - to see files that have changed
-   - git add <files> - any files listed in the status that have changed
+   - git add \<files\> - any files listed in the status that have changed
    - git commit -m "removed leaves from my tree" - commit the changes with a message
    - close your editor
 11. Now push your changes to GitHub and prepare a Pull Request (PR) to add your changes to the 'develop' branch
